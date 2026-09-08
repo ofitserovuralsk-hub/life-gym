@@ -1,0 +1,550 @@
+/* ===================================
+   RESPONSIVE STYLES
+   =================================== */
+
+/* Large Desktop (1200px and below) */
+@media (max-width: 1200px) {
+    :root {
+        --container-max-width: 960px;
+        --header-height: 90px;
+    }
+    
+    .logo-img {
+        height: 70px;
+    }
+    
+    .footer-logo-img {
+        height: 70px;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .gallery-item-large {
+        grid-column: span 2;
+        grid-row: span 2;
+    }
+    
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Desktop (992px and below) */
+@media (max-width: 992px) {
+    :root {
+        --container-max-width: 720px;
+    }
+    
+    .nav-menu {
+        display: none;
+    }
+    
+    .nav-cta {
+        display: none;
+    }
+    
+    .nav-toggle {
+        display: flex;
+    }
+    
+    .about-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-2xl);
+    }
+    
+    .about-content {
+        padding-right: 0;
+    }
+    
+    .about-image-wrapper {
+        height: 400px;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .gallery-item-large {
+        grid-column: span 2;
+        grid-row: span 2;
+    }
+    
+    .instagram-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .instagram-info {
+        padding-right: 0;
+        margin-bottom: var(--spacing-xl);
+    }
+    
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-map {
+        height: 400px;
+    }
+    
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-2xl);
+    }
+}
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+    :root {
+        --container-max-width: 540px;
+        --header-height: 90px;
+    }
+    
+    .section {
+        padding: var(--spacing-2xl) 0;
+    }
+    
+    .section-header {
+        margin-bottom: var(--spacing-2xl);
+    }
+    
+    .logo-img {
+        height: 60px;
+    }
+    
+    .footer-logo-img {
+        height: 90px;
+    }
+    
+    .hero-logo-img {
+        height: 100px;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-large {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .about-stats {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .about-stat-number {
+        font-size: 2rem;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .advantages-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .advantage-item {
+        padding: var(--spacing-lg) 0;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: 200px;
+    }
+    
+    .gallery-item-large,
+    .gallery-item-wide {
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+    
+    /* Lightbox mobile adjustments */
+    .lightbox-nav {
+        display: none;
+    }
+    
+    .lightbox-close {
+        top: -50px;
+        right: 0;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .lightbox-caption {
+        bottom: -40px;
+        font-size: 0.875rem;
+    }
+    
+    .trainers-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .pricing-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .calculator-content {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .calculator-card {
+        padding: var(--spacing-xl);
+    }
+    
+    .result-price {
+        font-size: 2rem;
+    }
+    
+    .reviews-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .contact-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .contact-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .schedule-item {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+        padding: var(--spacing-md) 0;
+    }
+    
+    .schedule-time {
+        min-width: auto;
+        font-size: 1rem;
+    }
+    
+    .schedule-spots {
+        text-align: left;
+    }
+    
+    .schedule-days {
+        gap: var(--spacing-xs);
+    }
+    
+    .schedule-day-btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+    }
+    
+    .schedule-content {
+        padding: var(--spacing-lg);
+    }
+    
+    .schedule-name {
+        font-size: 1rem;
+    }
+    
+    .try-gym-form-wrapper {
+        padding: var(--spacing-xl);
+    }
+    
+    .form-input,
+    .form-select,
+    .form-textarea {
+        padding: 0.875rem;
+        font-size: 0.875rem;
+    }
+    
+    .success-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .success-icon svg {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .success-title {
+        font-size: 1.25rem;
+    }
+}
+
+/* Mobile (576px and below) */
+@media (max-width: 576px) {
+    :root {
+        --container-max-width: 100%;
+        --spacing-md: 0.75rem;
+        --spacing-lg: 1.5rem;
+        --spacing-xl: 2rem;
+        --spacing-2xl: 3rem;
+        --spacing-3xl: 4rem;
+        --header-height: 80px;
+    }
+    
+    .container {
+        padding: 0 var(--spacing-md);
+    }
+    
+    .nav-container {
+        padding: 0 var(--spacing-md);
+    }
+    
+    .hero {
+        min-height: 500px;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-logo {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .logo-img {
+        height: 50px;
+    }
+    
+    .hero-logo-img {
+        height: 80px;
+    }
+    
+    .section-title {
+        font-size: 1.75rem;
+    }
+    
+    .section-subtitle {
+        font-size: 1rem;
+    }
+    
+    .about-title {
+        font-size: 1.5rem;
+    }
+    
+    .about-image-wrapper {
+        height: 300px;
+    }
+    
+    .service-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .advantage-number {
+        font-size: 3rem;
+    }
+    
+    .advantage-title {
+        font-size: 1.25rem;
+    }
+    
+    .trainer-image {
+        height: 250px;
+    }
+    
+    .trainer-info {
+        padding: var(--spacing-md);
+    }
+    
+    .trainer-name {
+        font-size: 1.125rem;
+    }
+    
+    .pricing-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .pricing-price {
+        font-size: 2rem;
+    }
+    
+    .calculator-wrapper {
+        margin-top: var(--spacing-xl);
+    }
+    
+    .calculator-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .calculator-title {
+        font-size: 1.25rem;
+    }
+    
+    .result-price {
+        font-size: 1.75rem;
+    }
+    
+    .review-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .instagram-preview {
+        height: 300px;
+    }
+    
+    .contact-map {
+        height: 300px;
+    }
+    
+    .footer {
+        padding: var(--spacing-2xl) 0 var(--spacing-lg);
+    }
+    
+    .footer-grid {
+        gap: var(--spacing-xl);
+    }
+    
+    .footer-logo-img {
+        height: 70px;
+    }
+}
+
+/* Mobile Menu Styles */
+@media (max-width: 992px) {
+    .nav-menu.active {
+        display: flex;
+        position: absolute;
+        top: var(--header-height);
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background-color: var(--color-black);
+        padding: var(--spacing-lg);
+        gap: var(--spacing-md);
+        border-bottom: 1px solid var(--color-gray-800);
+    }
+    
+    .nav-menu.active .nav-link {
+        padding: var(--spacing-sm) 0;
+        font-size: 1rem;
+    }
+    
+    .nav-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+    }
+    
+    .nav-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .nav-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+    }
+}
+
+/* Small Mobile (400px and below) */
+@media (max-width: 400px) {
+    .hero-title {
+        font-size: 1.75rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.875rem;
+    }
+    
+    .btn {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.8125rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .about-stat-number {
+        font-size: 1.75rem;
+    }
+    
+    .service-icon {
+        width: 56px;
+        height: 56px;
+    }
+    
+    .service-icon svg {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .header,
+    .hero-scroll,
+    .nav-toggle,
+    .btn,
+    .instagram-cta,
+    .contact-cta {
+        display: none;
+    }
+    
+    .hero {
+        height: auto;
+        min-height: 300px;
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .section {
+        page-break-inside: avoid;
+    }
+    
+    body {
+        font-size: 12pt;
+    }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .hero-scroll-line {
+        animation: none;
+    }
+    
+    .custom-cursor {
+        display: none;
+    }
+}
+
+/* Hide custom cursor on mobile */
+@media (max-width: 768px) {
+    .custom-cursor {
+        display: none;
+    }
+}
+
+/* Ensure default cursor on desktop */
+@media (min-width: 769px) {
+    body {
+        cursor: auto;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    :root {
+        --color-gray-200: #CCCCCC;
+        --color-gray-400: #666666;
+        --color-gray-600: #333333;
+    }
+    
+    .btn-secondary {
+        border-width: 3px;
+    }
+    
+    .btn-outline {
+        border-width: 3px;
+    }
+}
