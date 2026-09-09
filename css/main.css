@@ -2108,6 +2108,7 @@ button {
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(8px);
+    touch-action: none;
 }
 
 .lightbox-content {
@@ -2118,6 +2119,7 @@ button {
     align-items: center;
     justify-content: center;
     animation: lightboxSlideIn 0.3s ease forwards;
+    touch-action: pan-y;
 }
 
 @keyframes lightboxSlideIn {
@@ -2152,8 +2154,9 @@ button {
     color: var(--color-black);
     border-radius: 50%;
     transition: all var(--transition-normal);
-    z-index: 10;
+    z-index: 20;
     cursor: pointer;
+    touch-action: manipulation;
 }
 
 .lightbox-close:hover {
@@ -2175,8 +2178,9 @@ button {
     color: var(--color-black);
     border-radius: 50%;
     transition: all var(--transition-normal);
-    z-index: 10;
+    z-index: 20;
     cursor: pointer;
+    touch-action: manipulation;
 }
 
 .lightbox-nav:hover {

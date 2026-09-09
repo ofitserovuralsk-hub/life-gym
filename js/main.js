@@ -812,6 +812,12 @@ if (lightboxNext) {
         e.stopPropagation();
         showNextImage();
     });
+    
+    // Touch support for mobile
+    lightboxNext.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+        showNextImage();
+    });
 }
 
 if (lightboxPrev) {
@@ -819,4 +825,40 @@ if (lightboxPrev) {
         e.stopPropagation();
         showPrevImage();
     });
+    
+    // Touch support for mobile
+    lightboxPrev.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+        showPrevImage();
+    });
+}
+
+// Swipe support for mobile lightbox
+let touchStartX = 0;
+let touchEndX = 0;
+
+if (lightbox) {
+    lightbox.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, false);
+    
+    lightbox.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, false);
+}
+
+function handleSwipe() {
+    const swipeThreshold = 50;
+    const diff = touchStartX - touchEndX;
+    
+    if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0) {
+            // Swipe left - show next image
+            showNextImage();
+        } else {
+            // Swipe right - show previous image
+            showPrevImage();
+        }
+    }
 }
