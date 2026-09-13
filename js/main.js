@@ -1,4 +1,80 @@
 // ===================================
+// LEAD SUBMISSION (BACKEND API)
+// ===================================
+// Relative URL: works out of the box when the backend serves this site itself
+// (see backend/README.md). If the frontend is hosted separately, change this
+// to the backend's full URL, e.g. 'https://api.lifegym-uralsk.kz/api/leads'.
+const LEAD_API_URL = '/api/leads';
+
+// Captures utm_source/utm_medium/utm_campaign/utm_content/utm_term from the
+// current URL and remembers them for the rest of the browser session, so a
+// lead submitted later (after scrolling/navigating within the page) still
+// carries the campaign that brought the visitor in.
+function getUtmParams() {
+    const params = new URLSearchParams(window.location.search);
+    const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+    const fromUrl = {};
+    let hasUtm = false;
+
+    keys.forEach((key) => {
+        const value = params.get(key);
+        if (value) {
+            fromUrl[key] = value;
+            hasUtm = true;
+        }
+    });
+
+    if (hasUtm) {
+        try {
+            sessionStorage.setItem('lifegym_utm', JSON.stringify(fromUrl));
+        } catch (e) {
+            // sessionStorage unavailable (private mode etc.) - not critical
+        }
+        return fromUrl;
+    }
+
+    try {
+        const stored = sessionStorage.getItem('lifegym_utm');
+        if (stored) return JSON.parse(stored);
+    } catch (e) {
+        // ignore
+    }
+
+    return {};
+}
+
+// Sends a lead to the backend. Throws on any non-2xx response or network
+// error, so callers can show the existing error UI and let the visitor retry.
+async function submitLead(payload) {
+    const utm = getUtmParams();
+
+    const body = {
+        ...payload,
+        utm: {
+            source: utm.utm_source || null,
+            medium: utm.utm_medium || null,
+            campaign: utm.utm_campaign || null,
+            content: utm.utm_content || null,
+            term: utm.utm_term || null,
+        },
+        referrer: document.referrer || null,
+        pageUrl: window.location.href,
+    };
+
+    const response = await fetch(LEAD_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+        throw new Error('Lead submission failed with status ' + response.status);
+    }
+
+    return response.json();
+}
+
+// ===================================
 // DOM ELEMENTS
 // ===================================
 const navToggle = document.querySelector('.nav-toggle');
@@ -7,6 +83,7 @@ const navLinks = document.querySelectorAll('.nav-link');
 const header = document.querySelector('.header');
 const scrollProgress = document.getElementById('scrollProgress');
 const customCursor = document.getElementById('customCursor');
+const scrollToTop = document.getElementById('scrollToTop');
 
 // ===================================
 // MOBILE MENU
@@ -96,6 +173,32 @@ function updateScrollProgress() {
 
 window.addEventListener('scroll', updateScrollProgress);
 updateScrollProgress(); // Initial call
+
+// ===================================
+// SCROLL TO TOP BUTTON
+// ===================================
+function handleScrollToTopVisibility() {
+    const scrollTop = window.pageYOffset;
+    
+    if (scrollTop > 300) {
+        scrollToTop.classList.add('visible');
+    } else {
+        scrollToTop.classList.remove('visible');
+    }
+}
+
+window.addEventListener('scroll', handleScrollToTopVisibility);
+handleScrollToTopVisibility(); // Initial call
+
+// Scroll to top when button is clicked
+if (scrollToTop) {
+    scrollToTop.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+}
 
 // ===================================
 // ENHANCED SCROLL ANIMATIONS
@@ -239,22 +342,6 @@ function updateActiveNavLink() {
 window.addEventListener('scroll', updateActiveNavLink);
 
 // ===================================
-// LAZY LOADING FOR IMAGES
-// ===================================
-if ('loading' in HTMLImageElement.prototype) {
-    const images = document.querySelectorAll('img[loading="lazy"]');
-    images.forEach(img => {
-        img.src = img.dataset.src;
-    });
-} else {
-    // Fallback for browsers that don't support lazy loading
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
-    script.defer = true;
-    document.body.appendChild(script);
-}
-
-// ===================================
 // ACCESSIBILITY
 // ===================================
 // Handle keyboard navigation for mobile menu
@@ -330,8 +417,8 @@ const retryFormBtn = document.getElementById('retryForm');
 
 // Validation function
 function validateForm(form) {
-    const nameInput = form.querySelector('input[name="name"], input[name="bookingName"]');
-    const phoneInput = form.querySelector('input[name="phone"], input[name="bookingPhone"]');
+    const nameInput = form.querySelector('input[name="name"], input[name="bookingName"], input[name="paymentName"]');
+    const phoneInput = form.querySelector('input[name="phone"], input[name="bookingPhone"], input[name="paymentPhone"]');
     
     let isValid = true;
     
@@ -365,42 +452,55 @@ function validateForm(form) {
 }
 
 // Add input event listeners to clear validation on typing
-document.querySelectorAll('input[name="name"], input[name="bookingName"], input[name="phone"], input[name="bookingPhone"]').forEach(input => {
+document.querySelectorAll('input[name="name"], input[name="bookingName"], input[name="paymentName"], input[name="phone"], input[name="bookingPhone"], input[name="paymentPhone"]').forEach(input => {
     input.addEventListener('input', function() {
         this.setCustomValidity('');
     });
 });
 
+const DIRECTION_LABELS = {
+    gym: 'Тренажёрный зал',
+    personal: 'Персональные тренировки',
+    group: 'Групповые тренировки',
+    functional: 'Функциональный тренинг',
+    cardio: 'Кардио-зона',
+    yoga: 'Йога',
+};
+
 if (tryGymForm) {
     tryGymForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        
+
         // Validate form
         if (!validateForm(tryGymForm)) {
             tryGymForm.reportValidity();
             return;
         }
-        
+
         // Show loading state
         tryGymForm.style.display = 'none';
         formLoading.style.display = 'block';
-        
-        // Simulate form submission (no backend)
-        setTimeout(() => {
-            // Get form data
-            const formData = new FormData(tryGymForm);
-            const name = formData.get('name');
-            const phone = formData.get('phone');
-            const direction = formData.get('direction');
-            const comment = formData.get('comment');
-            
-            // Hide loading and show success message
+
+        const formData = new FormData(tryGymForm);
+        const direction = formData.get('direction');
+        const comment = formData.get('comment');
+
+        submitLead({
+            source: 'try-gym',
+            name: formData.get('name'),
+            phone: formData.get('phone'),
+            comment: [
+                direction ? `Направление: ${DIRECTION_LABELS[direction] || direction}` : null,
+                comment ? comment.trim() : null,
+            ].filter(Boolean).join('. ') || null,
+        }).then(() => {
             formLoading.style.display = 'none';
             formSuccess.style.display = 'block';
-            
-            // Add animation class
             formSuccess.classList.add('fade-in');
-        }, 1500);
+        }).catch(() => {
+            formLoading.style.display = 'none';
+            formError.style.display = 'block';
+        });
     });
 }
 
@@ -666,21 +766,24 @@ if (bookingForm) {
         // Show loading state
         bookingForm.style.display = 'none';
         bookingLoading.style.display = 'block';
-        
-        // Simulate form submission (no backend)
-        setTimeout(() => {
-            // Get form data
-            const formData = new FormData(bookingForm);
-            const name = formData.get('bookingName');
-            const phone = formData.get('bookingPhone');
-            
-            // Hide loading and show success message
+
+        const formData = new FormData(bookingForm);
+
+        submitLead({
+            source: 'booking',
+            name: formData.get('bookingName'),
+            phone: formData.get('bookingPhone'),
+            planName: bookingTrainingName.textContent,
+            planDuration: `${bookingTrainingDate.textContent}, ${bookingTrainingTime.textContent}`,
+            comment: `Тренер: ${bookingTrainingTrainer.textContent}`,
+        }).then(() => {
             bookingLoading.style.display = 'none';
             bookingSuccess.style.display = 'block';
-            
-            // Add animation class
             bookingSuccess.classList.add('fade-in');
-        }, 1500);
+        }).catch(() => {
+            bookingLoading.style.display = 'none';
+            bookingError.style.display = 'block';
+        });
     });
 }
 
@@ -694,6 +797,147 @@ if (bookingRetry) {
     bookingRetry.addEventListener('click', function() {
         bookingError.style.display = 'none';
         bookingForm.style.display = 'flex';
+    });
+}
+
+// ===================================
+// PAYMENT MODAL FUNCTIONALITY
+// ===================================
+const paymentModal = document.getElementById('paymentModal');
+const paymentModalOverlay = document.getElementById('paymentModalOverlay');
+const paymentModalClose = document.getElementById('paymentModalClose');
+const paymentForm = document.getElementById('paymentForm');
+const paymentSuccess = document.getElementById('paymentSuccess');
+const paymentError = document.getElementById('paymentError');
+const paymentLoading = document.getElementById('paymentLoading');
+const paymentReset = document.getElementById('paymentReset');
+const paymentRetry = document.getElementById('paymentRetry');
+
+// Modal elements for displaying plan info
+const paymentPlanName = document.getElementById('paymentPlanName');
+const paymentPlanDuration = document.getElementById('paymentPlanDuration');
+const paymentPlanAmount = document.getElementById('paymentPlanAmount');
+
+// Function to open payment modal
+function openPaymentModal(planData) {
+    // Populate modal with plan data
+    paymentPlanName.textContent = planData.name;
+    paymentPlanDuration.textContent = planData.duration;
+    paymentPlanAmount.textContent = planData.amount;
+
+    // Reset form and show form
+    paymentForm.reset();
+    paymentForm.style.display = 'flex';
+    paymentSuccess.style.display = 'none';
+    paymentError.style.display = 'none';
+    paymentLoading.style.display = 'none';
+
+    // Show modal
+    paymentModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Function to close payment modal
+function closePaymentModal() {
+    paymentModal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Pricing card "Оплатить онлайн" buttons
+document.querySelectorAll('.pricing-pay-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const amount = parseInt(btn.dataset.planAmount, 10);
+        openPaymentModal({
+            name: btn.dataset.planName,
+            duration: btn.dataset.planDuration,
+            amount: amount.toLocaleString('ru-RU') + ' ₸'
+        });
+    });
+});
+
+// Calculator "Оплатить онлайн" button
+const calculatorPayBtn = document.getElementById('calculatorPayBtn');
+if (calculatorPayBtn) {
+    calculatorPayBtn.addEventListener('click', () => {
+        openPaymentModal({
+            name: 'Абонемент (калькулятор)',
+            duration: priceDescriptionElement.textContent,
+            amount: totalPriceElement.textContent
+        });
+    });
+}
+
+// Close modal when clicking overlay
+if (paymentModalOverlay) {
+    paymentModalOverlay.addEventListener('click', closePaymentModal);
+}
+
+// Close modal when clicking close button
+if (paymentModalClose) {
+    paymentModalClose.addEventListener('click', closePaymentModal);
+}
+
+// Close modal when pressing Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && paymentModal.classList.contains('active')) {
+        closePaymentModal();
+    }
+});
+
+const PAYMENT_METHOD_LABELS = {
+    kaspi: 'Kaspi Pay',
+    card: 'Банковская карта',
+    cash: 'Наличными при посещении',
+};
+
+// Handle form submission
+if (paymentForm) {
+    paymentForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Validate form
+        if (!validateForm(paymentForm)) {
+            paymentForm.reportValidity();
+            return;
+        }
+
+        // Show loading state
+        paymentForm.style.display = 'none';
+        paymentLoading.style.display = 'block';
+
+        const formData = new FormData(paymentForm);
+        const paymentMethod = formData.get('paymentMethod');
+
+        submitLead({
+            source: 'payment',
+            name: formData.get('paymentName'),
+            phone: formData.get('paymentPhone'),
+            email: formData.get('paymentEmail'),
+            planName: paymentPlanName.textContent,
+            planDuration: paymentPlanDuration.textContent,
+            planAmount: paymentPlanAmount.textContent,
+            paymentMethod: PAYMENT_METHOD_LABELS[paymentMethod] || paymentMethod,
+        }).then(() => {
+            paymentLoading.style.display = 'none';
+            paymentSuccess.style.display = 'block';
+            paymentSuccess.classList.add('fade-in');
+        }).catch(() => {
+            paymentLoading.style.display = 'none';
+            paymentError.style.display = 'block';
+        });
+    });
+}
+
+// Handle reset button in success message
+if (paymentReset) {
+    paymentReset.addEventListener('click', closePaymentModal);
+}
+
+// Handle retry button in error message
+if (paymentRetry) {
+    paymentRetry.addEventListener('click', function() {
+        paymentError.style.display = 'none';
+        paymentForm.style.display = 'flex';
     });
 }
 

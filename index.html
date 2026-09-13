@@ -15,7 +15,10 @@
     <meta property="og:image" content="https://lifegym-uralsk.kz/logo.jpg">
     
     <title>Life Gym - Премиальный спортзал в Уральске</title>
-    
+
+    <link rel="icon" href="logo.jpg" type="image/jpeg">
+    <link rel="apple-touch-icon" href="logo.jpg">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -33,11 +36,18 @@
     <!-- Scroll Progress Bar -->
     <div class="scroll-progress" id="scrollProgress"></div>
     
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Вернуться наверх">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 15l-6-6-6 6"/>
+        </svg>
+    </button>
+    
     <!-- Header -->
     <header class="header">
         <nav class="nav">
             <div class="nav-container">
-                <a href="#" class="logo">
+                <a href="#hero" class="logo">
                     <img src="logo.jpg" alt="Life Gym Logo" class="logo-img">
                 </a>
                 
@@ -699,6 +709,104 @@
             </div>
         </div>
 
+        <!-- Payment Modal -->
+        <div class="booking-modal" id="paymentModal">
+            <div class="booking-modal-overlay" id="paymentModalOverlay"></div>
+            <div class="booking-modal-content">
+                <button class="booking-modal-close" id="paymentModalClose" aria-label="Закрыть">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+
+                <div class="booking-modal-header">
+                    <h3 class="booking-modal-title">Оплата абонемента</h3>
+                </div>
+
+                <div class="booking-modal-body">
+                    <div class="booking-training-info">
+                        <div class="booking-info-item">
+                            <span class="booking-info-label">Тариф:</span>
+                            <span class="booking-info-value" id="paymentPlanName">-</span>
+                        </div>
+                        <div class="booking-info-item">
+                            <span class="booking-info-label">Срок:</span>
+                            <span class="booking-info-value" id="paymentPlanDuration">-</span>
+                        </div>
+                        <div class="booking-info-item">
+                            <span class="booking-info-label">К оплате:</span>
+                            <span class="booking-info-value" id="paymentPlanAmount">-</span>
+                        </div>
+                    </div>
+
+                    <form class="booking-form" id="paymentForm">
+                        <div class="form-group">
+                            <label for="paymentName" class="form-label">Имя</label>
+                            <input type="text" id="paymentName" name="paymentName" class="form-input" required placeholder="Введите ваше имя" minlength="2" pattern="[A-Za-zА-Яа-я\s]+">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="paymentPhone" class="form-label">Телефон</label>
+                            <input type="tel" id="paymentPhone" name="paymentPhone" class="form-input" required placeholder="+7 (___) ___-__-__" pattern="[\+]?7?[\s\-]?\(?[0-9]{3}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="paymentEmail" class="form-label">Email</label>
+                            <input type="email" id="paymentEmail" name="paymentEmail" class="form-input" required placeholder="you@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="paymentMethod" class="form-label">Способ оплаты</label>
+                            <select id="paymentMethod" name="paymentMethod" class="form-select" aria-label="Выберите способ оплаты">
+                                <option value="kaspi">Kaspi Pay</option>
+                                <option value="card">Банковская карта</option>
+                                <option value="cash">Наличными при посещении</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-large form-submit">Перейти к оплате</button>
+                    </form>
+
+                    <div class="booking-loading" id="paymentLoading" style="display: none;">
+                        <div class="loading-spinner">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" stroke-dasharray="80" stroke-dashoffset="60">
+                                    <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/>
+                                </circle>
+                            </svg>
+                        </div>
+                        <p class="loading-text">Подключение к платёжному шлюзу...</p>
+                    </div>
+
+                    <div class="booking-success" id="paymentSuccess" style="display: none;">
+                        <div class="success-icon">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </div>
+                        <h3 class="success-title">Заявка на оплату принята!</h3>
+                        <p class="success-text">Мы отправим ссылку для безопасной оплаты на указанный email и телефон в течение нескольких минут.</p>
+                        <button class="btn btn-outline" id="paymentReset">Закрыть</button>
+                    </div>
+
+                    <div class="booking-error" id="paymentError" style="display: none;">
+                        <div class="error-icon">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="15" y1="9" x2="9" y2="15"/>
+                                <line x1="9" y1="9" x2="15" y2="15"/>
+                            </svg>
+                        </div>
+                        <h3 class="error-title">Ошибка оплаты</h3>
+                        <p class="error-text">Произошла ошибка при оформлении заявки. Пожалуйста, попробуйте еще раз.</p>
+                        <button class="btn btn-outline" id="paymentRetry">Попробовать снова</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Pricing Section -->
         <section class="section pricing" id="prices">
             <div class="container">
@@ -737,7 +845,10 @@
                             <li class="pricing-feature">Сауна</li>
                             <li class="pricing-feature">Фитнес-бар</li>
                         </ul>
-                        <a href="#contact" class="btn btn-primary pricing-cta" aria-label="Узнать цену месячного абонемента">Узнать цену</a>
+                        <div class="pricing-cta-group">
+                            <button type="button" class="btn btn-primary pricing-cta pricing-pay-btn" data-plan-name="Месячный абонемент" data-plan-duration="1 месяц" data-plan-amount="15000" aria-label="Оплатить месячный абонемент онлайн">Оплатить онлайн</button>
+                            <a href="#contact" class="btn btn-outline pricing-cta" aria-label="Узнать цену месячного абонемента">Узнать цену</a>
+                        </div>
                     </div>
                     
                     <div class="pricing-card" role="article" aria-label="Тариф: Персональные тренировки">
@@ -791,6 +902,7 @@
                                 <div class="result-label">Итого:</div>
                                 <div class="result-price" id="totalPrice">15 000 ₸</div>
                                 <div class="result-description" id="priceDescription">1 месяц, без персональных тренировок</div>
+                                <button type="button" class="btn btn-primary result-pay-btn" id="calculatorPayBtn" aria-label="Оплатить рассчитанный абонемент онлайн">Оплатить онлайн</button>
                             </div>
                         </div>
                     </div>
@@ -987,7 +1099,7 @@
                             </div>
                             <div class="contact-details">
                                 <h3 class="contact-title">Телефон</h3>
-                                <p class="contact-text">+7 (711) 123-45-67</p>
+                                <a href="tel:+77111234567" class="contact-link" aria-label="Позвонить в Life Gym">+7 (711) 123-45-67</a>
                             </div>
                         </div>
                         
@@ -1064,7 +1176,7 @@
                         </li>
                         <li class="footer-contact-item">
                             <span class="footer-contact-label">Телефон:</span>
-                            <span class="footer-contact-value">+7 (711) 123-45-67</span>
+                            <a href="tel:+77111234567" class="footer-contact-link" aria-label="Позвонить в Life Gym">+7 (711) 123-45-67</a>
                         </li>
                         <li class="footer-contact-item">
                             <span class="footer-contact-label">Instagram:</span>

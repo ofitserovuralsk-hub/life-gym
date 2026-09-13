@@ -152,6 +152,55 @@ button {
 }
 
 /* ===================================
+   SCROLL TO TOP BUTTON
+   =================================== */
+.scroll-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    background-color: var(--color-red);
+    color: var(--color-white);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all var(--transition-normal);
+    box-shadow: 0 4px 12px rgba(230, 0, 0, 0.3);
+}
+
+.scroll-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.scroll-to-top:hover {
+    background-color: var(--color-red-dark);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(230, 0, 0, 0.4);
+}
+
+.scroll-to-top:active {
+    transform: translateY(-2px);
+}
+
+.scroll-to-top svg {
+    transition: transform var(--transition-normal);
+}
+
+.scroll-to-top:hover svg {
+    transform: translateY(-2px);
+}
+
+/* ===================================
    HEADER & NAVIGATION
    =================================== */
 .header {
@@ -1005,6 +1054,12 @@ button {
     width: 100%;
 }
 
+.pricing-cta-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
 /* ===================================
    MEMBERSHIP CALCULATOR
    =================================== */
@@ -1049,7 +1104,7 @@ button {
 
 .calculator-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: var(--spacing-2xl);
     align-items: center;
 }
@@ -1095,6 +1150,13 @@ button {
     color: var(--color-gray-600);
     font-size: 0.875rem;
     line-height: 1.4;
+}
+
+.result-pay-btn {
+    width: 100%;
+    margin-top: var(--spacing-lg);
+    padding-left: var(--spacing-md);
+    padding-right: var(--spacing-md);
 }
 
 /* ===================================
