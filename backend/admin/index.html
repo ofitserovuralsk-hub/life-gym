@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Gym — Заявки</title>
+<style>
+    :root {
+        --color-black: #000000;
+        --color-white: #ffffff;
+        --color-red: #e60000;
+        --color-red-dark: #b30000;
+        --color-gray-50: #fafafa;
+        --color-gray-100: #f0f0f0;
+        --color-gray-200: #e0e0e0;
+        --color-gray-500: #888888;
+        --color-gray-700: #444444;
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+        background: var(--color-gray-50);
+        color: var(--color-black);
+    }
+    header {
+        background: var(--color-black);
+        color: var(--color-white);
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    header h1 {
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0;
+    }
+    .toolbar {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    select, input, button {
+        font: inherit;
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        border: 1px solid var(--color-gray-200);
+    }
+    button {
+        background: var(--color-red);
+        color: var(--color-white);
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    button:hover { background: var(--color-red-dark); }
+    button.secondary {
+        background: transparent;
+        color: var(--color-black);
+        border: 1px solid var(--color-gray-200);
+    }
+    main { padding: 1.5rem; }
+    #gate {
+        max-width: 360px;
+        margin: 4rem auto;
+        text-align: center;
+    }
+    #gate input { width: 100%; margin: 1rem 0; }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--color-white);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    th, td {
+        text-align: left;
+        padding: 0.65rem 0.85rem;
+        border-bottom: 1px solid var(--color-gray-100);
+        font-size: 0.875rem;
+        white-space: nowrap;
+    }
+    th {
+        background: var(--color-gray-50);
+        color: var(--color-gray-700);
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 0.05em;
+    }
+    td.wrap { white-space: normal; max-width: 220px; }
+    .badge {
+        display: inline-block;
+        padding: 0.15rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    .badge-new { background: #fde8e8; color: var(--color-red-dark); }
+    .badge-contacted { background: #fff4d6; color: #a86a00; }
+    .badge-converted { background: #dcf5e0; color: #1a7a32; }
+    .badge-rejected { background: var(--color-gray-100); color: var(--color-gray-500); }
+    #empty, #loading { text-align: center; padding: 3rem; color: var(--color-gray-500); }
+    #count { color: var(--color-gray-500); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+    <h1>Life Gym — Заявки</h1>
+    <p>Введите admin-ключ (ADMIN_API_KEY на сервере)</p>
+    <input type="password" id="keyInput" placeholder="Admin key">
+    <button id="keySubmit">Войти</button>
+    <p id="gateError" style="color:var(--color-red); display:none;"></p>
+</div>
+
+<div id="app" style="display:none;">
+    <header>
+        <h1>Life Gym — Заявки</h1>
+        <div class="toolbar">
+            <select id="sourceFilter">
+                <option value="">Все источники</option>
+                <option value="try-gym">Пробная тренировка</option>
+                <option value="booking">Запись на тренировку</option>
+                <option value="payment">Оплата абонемента</option>
+            </select>
+            <select id="statusFilter">
+                <option value="">Все статусы</option>
+                <option value="new">Новая</option>
+                <option value="contacted">Связались</option>
+                <option value="converted">Клиент</option>
+                <option value="rejected">Отказ</option>
+            </select>
+            <button class="secondary" id="refreshBtn">Обновить</button>
+            <button class="secondary" id="logoutBtn">Выйти</button>
+        </div>
+    </header>
+    <main>
+        <p id="count"></p>
+        <div id="loading" style="display:none;">Загрузка…</div>
+        <div id="empty" style="display:none;">Заявок пока нет.</div>
+        <div style="overflow-x:auto;">
+            <table id="table" style="display:none;">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Источник</th>
+                        <th>Имя</th>
+                        <th>Телефон</th>
+                        <th>Email</th>
+                        <th>Тариф / тренировка</th>
+                        <th>Срок / время</th>
+                        <th>Сумма</th>
+                        <th>Комментарий</th>
+                        <th>UTM</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<script>
+const SOURCE_LABELS = { 'try-gym': 'Пробная тренировка', booking: 'Запись', payment: 'Оплата' };
+const STATUS_LABELS = { new: 'Новая', contacted: 'Связались', converted: 'Клиент', rejected: 'Отказ' };
+
+const gate = document.getElementById('gate');
+const app = document.getElementById('app');
+const keyInput = document.getElementById('keyInput');
+const gateError = document.getElementById('gateError');
+
+function getKey() {
+    return sessionStorage.getItem('lifegym_admin_key') || '';
+}
+
+async function apiFetch(path, options = {}) {
+    const res = await fetch('/api' + path, {
+        ...options,
+        headers: { ...(options.headers || {}), 'x-admin-key': getKey() },
+    });
+    if (res.status === 401) {
+        sessionStorage.removeItem('lifegym_admin_key');
+        showGate('Неверный ключ');
+        throw new Error('Unauthorized');
+    }
+    return res;
+}
+
+function showGate(error) {
+    gate.style.display = 'block';
+    app.style.display = 'none';
+    if (error) {
+        gateError.textContent = error;
+        gateError.style.display = 'block';
+    }
+}
+
+function showApp() {
+    gate.style.display = 'none';
+    app.style.display = 'block';
+    loadLeads();
+}
+
+document.getElementById('keySubmit').addEventListener('click', async () => {
+    const key = keyInput.value.trim();
+    if (!key) return;
+    sessionStorage.setItem('lifegym_admin_key', key);
+    try {
+        const res = await apiFetch('/leads?limit=1');
+        if (res.ok) showApp();
+    } catch (e) {
+        // showGate already called on 401
+    }
+});
+
+keyInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('keySubmit').click();
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+    sessionStorage.removeItem('lifegym_admin_key');
+    showGate();
+});
+
+document.getElementById('refreshBtn').addEventListener('click', loadLeads);
+document.getElementById('sourceFilter').addEventListener('change', loadLeads);
+document.getElementById('statusFilter').addEventListener('change', loadLeads);
+
+async function loadLeads() {
+    const table = document.getElementById('table');
+    const loading = document.getElementById('loading');
+    const empty = document.getElementById('empty');
+    const tbody = document.getElementById('tbody');
+    const count = document.getElementById('count');
+
+    table.style.display = 'none';
+    empty.style.display = 'none';
+    loading.style.display = 'block';
+
+    const source = document.getElementById('sourceFilter').value;
+    const status = document.getElementById('statusFilter').value;
+    const query = new URLSearchParams();
+    if (source) query.set('source', source);
+    if (status) query.set('status', status);
+
+    try {
+        const res = await apiFetch('/leads?' + query.toString());
+        if (!res.ok) throw new Error('Failed to load');
+        const data = await res.json();
+
+        loading.style.display = 'none';
+        count.textContent = `Всего заявок: ${data.total}`;
+
+        if (!data.leads.length) {
+            empty.style.display = 'block';
+            return;
+        }
+
+        tbody.innerHTML = data.leads.map(rowHtml).join('');
+        table.style.display = 'table';
+
+        tbody.querySelectorAll('select.status-select').forEach((select) => {
+            select.addEventListener('change', async (e) => {
+                const id = e.target.dataset.id;
+                await apiFetch(`/leads/${id}/status`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: e.target.value }),
+                });
+            });
+        });
+    } catch (e) {
+        loading.style.display = 'none';
+    }
+}
+
+function rowHtml(lead) {
+    const utm = [lead.utm_source, lead.utm_medium, lead.utm_campaign].filter(Boolean).join(' / ') || '—';
+    const statusOptions = Object.entries(STATUS_LABELS)
+        .map(([value, label]) => `<option value="${value}" ${lead.status === value ? 'selected' : ''}>${label}</option>`)
+        .join('');
+
+    return `
+        <tr>
+            <td>${formatDate(lead.created_at)}</td>
+            <td>${SOURCE_LABELS[lead.source] || lead.source}</td>
+            <td>${escapeHtml(lead.name)}</td>
+            <td><a href="tel:${escapeHtml(lead.phone)}">${escapeHtml(lead.phone)}</a></td>
+            <td>${lead.email ? escapeHtml(lead.email) : '—'}</td>
+            <td class="wrap">${lead.plan_name ? escapeHtml(lead.plan_name) : '—'}</td>
+            <td class="wrap">${lead.plan_duration ? escapeHtml(lead.plan_duration) : '—'}</td>
+            <td>${lead.plan_amount ? escapeHtml(lead.plan_amount) : '—'}</td>
+            <td class="wrap">${lead.comment ? escapeHtml(lead.comment) : '—'}</td>
+            <td class="wrap">${escapeHtml(utm)}</td>
+            <td><select class="status-select" data-id="${lead.id}">${statusOptions}</select></td>
+        </tr>
+    `;
+}
+
+function formatDate(iso) {
+    const d = new Date(iso);
+    return d.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+}
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+if (getKey()) {
+    showApp();
+} else {
+    showGate();
+}
+</script>
+</body>
+</html>

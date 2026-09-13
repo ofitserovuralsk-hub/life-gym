@@ -1,0 +1,20 @@
+{
+  "name": "lifegym-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Lead-capture API for the Life Gym website (forms -> JSON store + Telegram), built to be swapped for a real CRM later.",
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0"
+  }
+}
