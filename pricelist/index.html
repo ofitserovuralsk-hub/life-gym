@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Gym — Прайс-лист</title>
+    <link rel="icon" href="assets/logo.jpg" type="image/jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ===== Бренд (как на сайте Life Gym) ===== */
+        :root {
+            --black: #000;
+            --white: #fff;
+            --red: #E60000;
+            --red-dark: #CC0000;
+            --g100: #F5F5F5;
+            --g200: #E5E5E5;
+            --g300: #D4D4D4;
+            --g500: #737373;
+            --g700: #404040;
+            --g900: #171717;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        @page { size: A4; margin: 0; }
+
+        html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+        body {
+            font-family: var(--font);
+            color: var(--black);
+            background: #2b2b2b;
+            line-height: 1.35;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== Панель (только на экране) ===== */
+        .toolbar {
+            position: sticky; top: 0; z-index: 10;
+            display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+            padding: 10px 20px;
+            background: var(--g900); color: var(--white);
+            border-bottom: 2px solid var(--red);
+            font-size: 14px;
+        }
+        .toolbar strong { font-weight: 800; letter-spacing: .04em; }
+        .toolbar .spacer { flex: 1; }
+        .toolbar button {
+            font: inherit; font-weight: 700; cursor: pointer;
+            background: var(--red); color: var(--white);
+            border: 0; border-radius: 4px; padding: 8px 18px;
+        }
+        .toolbar button:hover { background: var(--red-dark); }
+        .toolbar .warn { color: #ffd54a; }
+
+        .sheet-wrap { padding: 24px 0 48px; }
+
+        /* ===== Страница A4 ===== */
+        .page {
+            position: relative;
+            width: 210mm; height: 297mm;
+            margin: 0 auto 24px;
+            background: var(--white);
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0,0,0,.5);
+            display: flex; flex-direction: column;
+            break-after: page; page-break-after: always;
+        }
+        .page:last-child { break-after: auto; page-break-after: auto; }
+
+        /* ===== Шапка внутренних страниц ===== */
+        .ph {
+            position: relative;
+            flex: none;
+            height: 36mm;
+            background: var(--black); color: var(--white);
+            display: flex; align-items: center; gap: 8mm;
+            padding: 0 14mm;
+            border-bottom: 1.6mm solid var(--red);
+        }
+        .ph-logo { width: 54mm; height: 24mm; flex: none; overflow: hidden; }
+        .ph-logo img { width: 100%; height: 100%; object-fit: cover; object-position: center 52%; display: block; }
+        .ph-title { flex: 1; text-align: right; }
+        .kicker { display: block; font-size: 8.5pt; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--g300); }
+        .ph-title h1 { font-size: 25pt; font-weight: 900; line-height: 1.05; text-transform: uppercase; letter-spacing: -.01em; margin-top: 1.5mm; }
+        .ph-title h1 em { font-style: normal; color: var(--red); }
+
+        /* ===== Подвал ===== */
+        .pf {
+            flex: none;
+            height: 12mm;
+            background: var(--black); color: var(--g300);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 14mm;
+            font-size: 7.5pt; font-weight: 500; letter-spacing: .04em;
+            border-top: .8mm solid var(--red);
+        }
+        .pf b { color: var(--white); font-weight: 800; letter-spacing: .1em; }
+        .pf .pn { color: var(--white); font-weight: 800; }
+        .pf .pn span { color: var(--red); }
+
+        .pb { flex: 1; padding: 8mm 14mm 6mm; display: flex; flex-direction: column; gap: 6.5mm; min-height: 0; }
+
+        /* ===== Блок-секция ===== */
+        .sec-head { display: flex; align-items: center; gap: 4mm; margin-bottom: 3.2mm; }
+        .sec-head .mark { width: 2.2mm; height: 8mm; background: var(--red); flex: none; }
+        .sec-head h2 { font-size: 15pt; font-weight: 900; text-transform: uppercase; letter-spacing: .01em; line-height: 1; }
+        .chip {
+            margin-left: auto; flex: none;
+            font-size: 9pt; font-weight: 800; letter-spacing: .08em;
+            background: var(--black); color: var(--white);
+            padding: 1.6mm 3.6mm; border-radius: 1mm;
+        }
+        .sec-note { font-size: 8.5pt; color: var(--g500); margin: -1.4mm 0 3mm 6.2mm; }
+
+        /* ===== Карточки цен ===== */
+        .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3.2mm; }
+        .cards.c2 { grid-template-columns: repeat(2, 1fr); }
+        .card {
+            position: relative;
+            background: var(--g100);
+            border: .3mm solid var(--g200);
+            border-top: 1.2mm solid var(--black);
+            border-radius: 1.2mm;
+            padding: 4mm 3.6mm 3.6mm;
+            min-height: 38mm;
+            display: flex; flex-direction: column;
+        }
+        .card .term { font-size: 8.5pt; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--g700); }
+        .card .tn { margin-top: .8mm; font-size: 8.5pt; font-weight: 700; color: var(--black); }
+        .card.promo .tn { color: var(--white); }
+        .card .price { margin-top: 2.6mm; font-size: 21pt; font-weight: 900; letter-spacing: -.02em; line-height: 1; white-space: nowrap; }
+        .card .price i { font-style: normal; font-size: 12pt; font-weight: 800; color: var(--red); margin-left: .6mm; }
+        .card .old { font-size: 9pt; color: var(--g500); text-decoration: line-through; font-weight: 600; height: 4mm; margin-top: 1.4mm; }
+        .card .sub { margin-top: auto; padding-top: 2.4mm; border-top: .25mm dashed var(--g300); font-size: 8pt; line-height: 1.4; color: var(--g700); }
+        .card .sub b { color: var(--black); font-weight: 800; }
+        .card .sub .none { color: var(--g500); }
+
+        /* Акционная (годовая) карточка */
+        .card.promo { background: var(--black); color: var(--white); border-color: var(--black); border-top-color: var(--red); }
+        .card.promo .term { color: var(--g300); }
+        .card.promo .price i { color: var(--red); }
+        .card.promo .old { color: var(--g500); }
+        .card.promo .sub { border-top-color: #444; color: var(--g300); }
+        .card.promo .sub b { color: var(--white); }
+        .badge {
+            position: absolute; top: -.3mm; right: 3mm; transform: translateY(-50%);
+            background: var(--red); color: var(--white);
+            font-size: 6.8pt; font-weight: 900; letter-spacing: .12em; text-transform: uppercase;
+            padding: 1mm 2.4mm; border-radius: .8mm; white-space: nowrap;
+        }
+
+        /* Незаполненное значение (подсветка только на экране) */
+        .tbd { color: var(--g500); }
+        @media screen {
+            .tbd { background: rgba(255, 213, 74, .35); outline: 1.5px dashed #d99a00; outline-offset: 1px; border-radius: 1mm; }
+            .promo .tbd, .vip .tbd { color: #ffd54a; }
+        }
+
+        /* ===== Титульный лист ===== */
+        .cover { background: var(--black); color: var(--white); }
+        .cover-bg { position: absolute; inset: 0; background: url('assets/hero-bg.jpg') center/cover no-repeat; }
+        .cover-bg::after {
+            content: ''; position: absolute; inset: 0;
+            background:
+                linear-gradient(180deg, rgba(0,0,0,.78) 0%, rgba(0,0,0,.55) 38%, rgba(0,0,0,.9) 72%, #000 100%);
+        }
+        .cover-in { position: relative; z-index: 1; height: 100%; padding: 16mm 16mm 14mm; display: flex; flex-direction: column; }
+        .cover-logo { width: 62mm; height: 62mm; margin: 6mm auto 0; border: .4mm solid #333; border-top: 1.2mm solid var(--red); background: #000; }
+        .cover-logo img { width: 100%; height: 100%; display: block; }
+        .cover-title { text-align: center; margin-top: 16mm; }
+        .cover-title .kicker { font-size: 10pt; letter-spacing: .38em; color: var(--g300); }
+        .cover-title h1 { font-size: 54pt; font-weight: 900; line-height: .98; text-transform: uppercase; letter-spacing: -.02em; margin-top: 4mm; }
+        .cover-title h1 em { display: block; font-style: normal; color: var(--red); }
+        .cover-title p { margin-top: 6mm; font-size: 12pt; color: var(--g300); font-weight: 500; }
+        .cover-promo {
+            margin: 12mm auto 0; text-align: center;
+            border: .5mm solid var(--red); border-radius: 1.2mm;
+            padding: 4mm 9mm; background: rgba(230,0,0,.12);
+        }
+        .cover-promo b { display: block; font-size: 20pt; font-weight: 900; letter-spacing: .02em; text-transform: uppercase; }
+        .cover-promo b em { font-style: normal; color: var(--red); }
+        .cover-promo span { font-size: 9.5pt; color: var(--g300); font-weight: 500; }
+        .cover-tiers { margin-top: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; }
+        .tier { border-top: 1.2mm solid var(--red); background: rgba(255,255,255,.07); padding: 4mm 4.4mm 4.4mm; }
+        .tier h3 { font-size: 12pt; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; }
+        .tier .time { margin-top: 1.4mm; font-size: 14pt; font-weight: 800; color: var(--red); }
+        .tier p { margin-top: 2mm; font-size: 8.5pt; color: var(--g300); line-height: 1.4; }
+        .cover-inc { margin-top: 6mm; text-align: center; font-size: 9pt; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--g300); }
+        .cover-inc span { color: var(--red); margin: 0 1.6mm; }
+        .cover-foot { margin-top: 8mm; display: flex; justify-content: space-between; align-items: flex-end; font-size: 8pt; color: var(--g500); letter-spacing: .06em; }
+        .cover-foot b { color: var(--white); font-weight: 800; letter-spacing: .1em; }
+
+        /* ===== VIP ===== */
+        .vip { background: var(--black); color: var(--white); border-radius: 1.6mm; padding: 6mm 6mm 6mm; position: relative; border-top: 1.6mm solid var(--red); }
+        .vip .sec-head h2 { color: var(--white); }
+        .vip .chip { background: var(--red); }
+        .vip .incl { margin: 0 0 4.6mm; display: flex; flex-wrap: wrap; gap: 1.6mm 2.2mm; }
+        .vip .incl span { font-size: 8pt; font-weight: 700; letter-spacing: .04em; border: .3mm solid #4a4a4a; border-radius: 10mm; padding: 1mm 3mm; color: var(--g200); }
+        .vip .incl span.plus { border-color: var(--red); color: var(--white); background: rgba(230,0,0,.25); }
+        .vip .card { background: #141414; border-color: #2c2c2c; border-top-color: var(--white); color: var(--white); }
+        .vip .card .term { color: var(--g300); }
+        .vip .card .sub { border-top-color: #444; color: var(--g300); }
+        .vip .card .sub b { color: var(--white); }
+        .vip .card .old { color: var(--g500); }
+        .vip .card.promo { background: var(--red); border-color: var(--red); border-top-color: var(--white); }
+        .vip .card.promo .price i { color: var(--white); }
+        .vip .card.promo .term, .vip .card.promo .sub, .vip .card.promo .old { color: #ffdede; }
+        .vip .card.promo .sub { border-top-color: rgba(255,255,255,.4); }
+        .vip .card.promo .badge { background: var(--white); color: var(--red); }
+
+        /* ===== Таблицы ===== */
+        table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+        th, td { padding: 2.1mm 3mm; text-align: left; border-bottom: .25mm solid var(--g200); }
+        thead th { background: var(--black); color: var(--white); font-size: 7.6pt; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; border: 0; }
+        thead th.c, td.c { text-align: center; }
+        tbody th { font-weight: 700; }
+        tbody tr:nth-child(even) { background: var(--g100); }
+        td.yes { color: var(--red); font-weight: 900; font-size: 11pt; text-align: center; }
+        td.no { color: var(--g300); text-align: center; }
+        td b { font-weight: 800; }
+        td .small { color: var(--g500); font-size: 7.6pt; }
+
+        .pb.spread { justify-content: space-between; }
+        .pb.tight { gap: 5mm; padding-top: 6.5mm; }
+        .tight th, .tight td { padding: 1.5mm 3mm; }
+        .tight .sec-head { margin-bottom: 2.4mm; }
+
+        .two { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
+        .note { font-size: 7.8pt; color: var(--g500); margin-top: 2mm; line-height: 1.4; }
+
+        .extras { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3.2mm; }
+        .extra { border: .3mm solid var(--g300); border-left: 1.4mm solid var(--red); border-radius: 1mm; padding: 3.4mm 4mm; }
+        .extra .term { font-size: 8pt; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--g700); }
+        .extra .price { font-size: 17pt; font-weight: 900; margin-top: 1.4mm; letter-spacing: -.01em; }
+        .extra .price i { font-style: normal; font-size: 10pt; color: var(--red); }
+
+        /* ===== Печать ===== */
+        @media print {
+            body { background: none; }
+            .toolbar { display: none; }
+            .sheet-wrap { padding: 0; }
+            .page { margin: 0; box-shadow: none; }
+        }
+
+        /* На узких экранах масштабируем лист целиком */
+        @media screen and (max-width: 820px) {
+            .page { zoom: calc(100vw / 800px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toolbar">
+        <strong>LIFE GYM · ПРАЙС-ЛИСТ</strong>
+        <span id="tbdInfo" class="warn"></span>
+        <span class="spacer"></span>
+        <button type="button" onclick="window.print()">Печать / Сохранить в PDF</button>
+    </div>
+
+    <div class="sheet-wrap">
+
+        <!-- =========================================================
+             СТРАНИЦА 1 — ТИТУЛ
+             ========================================================= -->
+        <section class="page cover">
+            <div class="cover-bg"></div>
+            <div class="cover-in">
+                <div class="cover-logo"><img src="assets/logo.jpg" alt="Life Gym"></div>
+
+                <div class="cover-title">
+                    <span class="kicker">Премиальный спортзал · Уральск</span>
+                    <h1>Прайс-лист <em>Клубные карты</em></h1>
+                    <p>1300 м² спорта и комфорта</p>
+                </div>
+
+                <div class="cover-promo">
+                    <b>Первые <em>300</em> клубных карт</b>
+                    <span>Годовые карты по специальной цене</span>
+                </div>
+
+                <div class="cover-tiers">
+                    <div class="tier">
+                        <h3>Утренняя</h3>
+                        <div class="time">7:00 — 15:00</div>
+                        <p>Для тех, кто тренируется с утра и днём.</p>
+                    </div>
+                    <div class="tier">
+                        <h3>Универсальная</h3>
+                        <div class="time">7:00 — 23:00</div>
+                        <p>Любое удобное время — с раннего утра до позднего вечера.</p>
+                    </div>
+                    <div class="tier">
+                        <h3>VIP</h3>
+                        <div class="time">7:00 — 23:00</div>
+                        <p>Всё из универсальной + шкафчик, химчистка и полотенца.</p>
+                    </div>
+                </div>
+
+                <div class="cover-inc">
+                    Тренажёрный зал <span>•</span> Групповые занятия <span>•</span> Кроссфит <span>•</span> Сауна <span>•</span> Душ
+                </div>
+
+                <div class="cover-foot">
+                    <div><b>LIFE GYM</b> · Уральск, мкр. Женис 1А</div>
+                    <div>@lifegym_uralsk</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             СТРАНИЦА 2 — ВЗРОСЛЫЕ КАРТЫ
+             ========================================================= -->
+        <section class="page">
+            <header class="ph">
+                <div class="ph-logo"><img src="assets/logo.jpg" alt="Life Gym"></div>
+                <div class="ph-title">
+                    <span class="kicker">Прайс-лист · Клубные карты</span>
+                    <h1>Взрослые <em>карты</em></h1>
+                </div>
+            </header>
+
+            <main class="pb spread">
+                <!-- Утренняя -->
+                <div>
+                    <div class="sec-head">
+                        <span class="mark"></span><h2>Утренняя карта</h2><span class="chip">7:00 — 15:00</span>
+                    </div>
+                    <div class="cards">
+                        <div class="card">
+                            <div class="term">1 месяц</div>
+                            <div class="price">25&nbsp;000<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub"><span class="none">Без заморозки</span></div>
+                        </div>
+                        <div class="card">
+                            <div class="term">3 месяца</div>
+                            <div class="price">70&nbsp;000<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub">Заморозка <b>15 дней</b><br><b>2</b> гостевых визита</div>
+                        </div>
+                        <div class="card">
+                            <div class="term">6 месяцев</div>
+                            <div class="price">135&nbsp;000<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub">Заморозка <b>30 дней</b><br><b>3</b> гостевых визита</div>
+                        </div>
+                        <div class="card promo">
+                            <span class="badge">Акция · первые 300</span>
+                            <div class="term">12 месяцев</div>
+                            <div class="price">165&nbsp;000<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub">В рассрочку <b>185&nbsp;000&nbsp;₸</b><br>Заморозка и гостевые: <span class="tbd">уточнить</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Универсальная -->
+                <div>
+                    <div class="sec-head">
+                        <span class="mark"></span><h2>Универсальная карта</h2><span class="chip">7:00 — 23:00</span>
+                    </div>
+                    <div class="cards">
+                        <div class="card">
+                            <div class="term">1 месяц</div>
+                            <div class="price">30&nbsp;000<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub"><span class="none">Без заморозки</span></div>
+                        </div>
+                        <div class="card">
+                            <div class="term">3 месяца</div>
+                            <div class="price tbd">—<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub">Заморозка и гостевые: <span class="tbd">уточнить</span></div>
+                        </div>
+                        <div class="card">
+                            <div class="term">6 месяцев</div>
+                            <div class="price tbd">—<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub">Заморозка и гостевые: <span class="tbd">уточнить</span></div>
+                        </div>
+                        <div class="card promo">
+                            <span class="badge">Акция · первые 300</span>
+                            <div class="term">12 месяцев</div>
+                            <div class="price">185&nbsp;000<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub">В рассрочку <b>210&nbsp;000&nbsp;₸</b><br>Заморозка и гостевые: <span class="tbd">уточнить</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Что входит -->
+                <div>
+                    <div class="sec-head">
+                        <span class="mark"></span><h2>Что входит в карту</h2>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr><th>Услуга</th><th class="c">Утренняя</th><th class="c">Универсальная</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><th>Тренажёрный зал</th><td class="yes">✓</td><td class="yes">✓</td></tr>
+                            <tr><th>Групповые занятия</th><td class="yes">✓</td><td class="yes">✓</td></tr>
+                            <tr><th>Кроссфит</th><td class="yes">✓</td><td class="yes">✓</td></tr>
+                            <tr><th>Сауна</th><td class="yes">✓</td><td class="yes">✓</td></tr>
+                            <tr><th>Душ</th><td class="yes">✓</td><td class="yes">✓</td></tr>
+                            <tr><th>Время посещения</th><td class="c"><b>7:00 — 15:00</b></td><td class="c"><b>7:00 — 23:00</b></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+
+            <footer class="pf">
+                <div><b>LIFE GYM</b> &nbsp;·&nbsp; Уральск, мкр. Женис 1А &nbsp;·&nbsp; @lifegym_uralsk</div>
+                <div class="pn">2 <span>/</span> 4</div>
+            </footer>
+        </section>
+
+        <!-- =========================================================
+             СТРАНИЦА 3 — СТУДЕНЧЕСКИЕ И VIP
+             ========================================================= -->
+        <section class="page">
+            <header class="ph">
+                <div class="ph-logo"><img src="assets/logo.jpg" alt="Life Gym"></div>
+                <div class="ph-title">
+                    <span class="kicker">Прайс-лист · Клубные карты</span>
+                    <h1>Студенческие <em>и VIP</em></h1>
+                </div>
+            </header>
+
+            <main class="pb spread">
+                <!-- Студенческие -->
+                <div>
+                    <div class="sec-head">
+                        <span class="mark"></span><h2>Студенческие карты</h2>
+                    </div>
+                    <p class="sec-note">В карту входит всё то же, что и во взрослые: зал, групповые занятия, кроссфит, сауна, душ.</p>
+                    <div class="cards">
+                        <div class="card">
+                            <div class="term">1 месяц</div><div class="tn">Утренняя</div>
+                            <div class="price">20&nbsp;000<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub"><b>7:00 — 15:00</b></div>
+                        </div>
+                        <div class="card">
+                            <div class="term">1 месяц</div><div class="tn">Универсальная</div>
+                            <div class="price">25&nbsp;000<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub"><b>7:00 — 23:00</b></div>
+                        </div>
+                        <div class="card promo">
+                            <span class="badge">Акция · первые 300</span>
+                            <div class="term">12 месяцев</div><div class="tn">Утренняя</div>
+                            <div class="price">145&nbsp;000<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub"><b>7:00 — 15:00</b><br>В рассрочку <b>165&nbsp;000&nbsp;₸</b></div>
+                        </div>
+                        <div class="card promo">
+                            <span class="badge">Акция · первые 300</span>
+                            <div class="term">12 месяцев</div><div class="tn">Универсальная</div>
+                            <div class="price">170&nbsp;000<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub"><b>7:00 — 23:00</b><br>В рассрочку <b>195&nbsp;000&nbsp;₸</b></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIP -->
+                <div class="vip">
+                    <div class="sec-head">
+                        <span class="mark"></span><h2>VIP универсальная</h2><span class="chip">7:00 — 23:00</span>
+                    </div>
+                    <div class="incl">
+                        <span>Тренажёрный зал</span>
+                        <span>Групповые занятия</span>
+                        <span>Кроссфит</span>
+                        <span>Сауна</span>
+                        <span>Душ</span>
+                        <span class="plus">+ Шкафчик в аренду</span>
+                        <span class="plus">+ Химчистка</span>
+                        <span class="plus">+ Полотенца</span>
+                    </div>
+                    <div class="cards">
+                        <div class="card">
+                            <div class="term">1 месяц</div>
+                            <div class="price">50&nbsp;000<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub"><span class="none">Без заморозки</span></div>
+                        </div>
+                        <div class="card">
+                            <div class="term">3 месяца</div>
+                            <div class="price">120&nbsp;000<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub">Заморозка и гостевые: <span class="tbd">уточнить</span></div>
+                        </div>
+                        <div class="card">
+                            <div class="term">6 месяцев</div>
+                            <div class="price">225&nbsp;000<i>₸</i></div>
+                            <div class="old"></div>
+                            <div class="sub">Заморозка и гостевые: <span class="tbd">уточнить</span></div>
+                        </div>
+                        <div class="card promo">
+                            <span class="badge">Акция · первые 300</span>
+                            <div class="term">12 месяцев</div>
+                            <div class="price">210&nbsp;000<i>₸</i></div>
+                            <div class="old">380&nbsp;000&nbsp;₸</div>
+                            <div class="sub">В рассрочку <b>235&nbsp;000&nbsp;₸</b><br>Заморозка и гостевые: <span class="tbd">уточнить</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Разовые и допуслуги -->
+                <div>
+                    <div class="sec-head">
+                        <span class="mark"></span><h2>Дополнительные услуги</h2>
+                    </div>
+                    <div class="extras">
+                        <div class="extra">
+                            <div class="term">Разовое посещение</div>
+                            <div class="price tbd">—<i>₸</i></div>
+                        </div>
+                        <div class="extra">
+                            <div class="term">Аренда шкафчика</div>
+                            <div class="price tbd">—<i>₸</i></div>
+                        </div>
+                        <div class="extra">
+                            <div class="term">Персональная тренировка</div>
+                            <div class="price tbd">—<i>₸</i></div>
+                        </div>
+                        <div class="extra">
+                            <div class="term">Мини-группы</div>
+                            <div class="price tbd">—<i>₸</i></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="pf">
+                <div><b>LIFE GYM</b> &nbsp;·&nbsp; Уральск, мкр. Женис 1А &nbsp;·&nbsp; @lifegym_uralsk</div>
+                <div class="pn">3 <span>/</span> 4</div>
+            </footer>
+        </section>
+
+        <!-- =========================================================
+             СТРАНИЦА 4 — СРАВНЕНИЕ И УСЛОВИЯ
+             ========================================================= -->
+        <section class="page">
+            <header class="ph">
+                <div class="ph-logo"><img src="assets/logo.jpg" alt="Life Gym"></div>
+                <div class="ph-title">
+                    <span class="kicker">Прайс-лист · Клубные карты</span>
+                    <h1>Сравнение <em>и условия</em></h1>
+                </div>
+            </header>
+
+            <main class="pb tight">
+                <!-- Сравнение карт -->
+                <div>
+                    <div class="sec-head">
+                        <span class="mark"></span><h2>Какую карту выбрать</h2>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr><th>Что входит</th><th class="c">Утренняя</th><th class="c">Универсальная</th><th class="c">VIP</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><th>Время посещения</th><td class="c"><b>7:00 — 15:00</b></td><td class="c"><b>7:00 — 23:00</b></td><td class="c"><b>7:00 — 23:00</b></td></tr>
+                            <tr><th>Тренажёрный зал</th><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+                            <tr><th>Групповые занятия</th><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+                            <tr><th>Кроссфит</th><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+                            <tr><th>Сауна</th><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+                            <tr><th>Душ</th><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+                            <tr><th>Шкафчик в аренду</th><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+                            <tr><th>Химчистка</th><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+                            <tr><th>Полотенца</th><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Годовые карты: акция -->
+                <div>
+                    <div class="sec-head">
+                        <span class="mark"></span><h2>Годовые карты · первые 300</h2>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr><th>Карта</th><th class="c">Наличными</th><th class="c">В рассрочку</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><th>Утренняя</th><td class="c"><b>165&nbsp;000&nbsp;₸</b></td><td class="c">185&nbsp;000&nbsp;₸</td></tr>
+                            <tr><th>Универсальная</th><td class="c"><b>185&nbsp;000&nbsp;₸</b></td><td class="c">210&nbsp;000&nbsp;₸</td></tr>
+                            <tr><th>VIP универсальная</th><td class="c"><b>210&nbsp;000&nbsp;₸</b></td><td class="c">235&nbsp;000&nbsp;₸</td></tr>
+                            <tr><th>Студенческая утренняя</th><td class="c"><b>145&nbsp;000&nbsp;₸</b></td><td class="c">165&nbsp;000&nbsp;₸</td></tr>
+                            <tr><th>Студенческая универсальная</th><td class="c"><b>170&nbsp;000&nbsp;₸</b></td><td class="c">195&nbsp;000&nbsp;₸</td></tr>
+                        </tbody>
+                    </table>
+                    <p class="note">Акционная цена действует на первые 300 проданных клубных карт.</p>
+                </div>
+
+                <!-- Заморозка и гостевые -->
+                <div>
+                    <div class="sec-head">
+                        <span class="mark"></span><h2>Заморозка и гостевые визиты</h2>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr><th>Срок карты</th><th class="c">Заморозка</th><th class="c">Гостевые визиты</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><th>1 месяц</th><td class="c tbd">уточнить</td><td class="c tbd">уточнить</td></tr>
+                            <tr><th>3 месяца</th><td class="c"><b>15 дней</b></td><td class="c"><b>2</b></td></tr>
+                            <tr><th>6 месяцев</th><td class="c"><b>30 дней</b></td><td class="c"><b>3</b></td></tr>
+                            <tr><th>12 месяцев</th><td class="c tbd">уточнить</td><td class="c tbd">уточнить</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="note" style="margin-top:auto">
+                    Все цены указаны в тенге (₸). Администратор клуба подберёт карту и ответит на любые вопросы.<br>
+                    Подробности и запись: <b style="color:#000">@lifegym_uralsk</b> в Instagram · Уральск, мкр. Женис 1А.
+                </div>
+            </main>
+
+            <footer class="pf">
+                <div><b>LIFE GYM</b> &nbsp;·&nbsp; Уральск, мкр. Женис 1А &nbsp;·&nbsp; @lifegym_uralsk</div>
+                <div class="pn">4 <span>/</span> 4</div>
+            </footer>
+        </section>
+
+    </div>
+
+    <script>
+        // Показываем на экране, сколько значений ещё надо уточнить (в печать не попадает)
+        (function () {
+            var n = document.querySelectorAll('.tbd').length;
+            var el = document.getElementById('tbdInfo');
+            el.textContent = n ? 'Нужно уточнить значений: ' + n + ' (подсвечены жёлтым)' : '';
+        })();
+    </script>
+</body>
+</html>
