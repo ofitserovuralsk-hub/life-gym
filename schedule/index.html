@@ -69,6 +69,8 @@
         .sunday p { margin-top: 1.4mm; font-size: 9pt; color: var(--g300); }
 
         @media screen {
+            body.editing .page { height: auto; min-height: 297mm; overflow: visible; }
+            body.editing .pb { flex: none; }
             body.editing [contenteditable="true"] { outline: 1.5px dashed #d99a00; outline-offset: 1px; background: rgba(255, 213, 74, .25); border-radius: 1mm; cursor: text; }
             body.editing [contenteditable="true"]:focus { outline: 2px solid #E60000; background: rgba(255, 213, 74, .45); }
             body.editing .row .pd, body.editing .row .rm { display: inline-block; flex: none; border: 0; border-radius: 3px; cursor: pointer; font-weight: 800; width: 6mm; height: 5.2mm; line-height: 5mm; font-size: 9pt; padding: 0; }
@@ -251,7 +253,7 @@
 
     <script>
         (function () {
-            var SEL = '.dn, .t, .n, .legend, .sunday h2, .sunday p';
+            var SEL = '.dn, .t, .n, .legend, .sunday h2, .sunday p, .kicker, .ph-title h1, .pf > div:first-child';
             var body = document.body;
             var wrap = document.querySelector('.sheet-wrap');
             var btnEdit = document.getElementById('btnEdit');

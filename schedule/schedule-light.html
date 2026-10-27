@@ -16,7 +16,7 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         @page { size: A4; margin: 0; }
-        html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        html { -webkit-print-color-adjust: exact; print-color-adjust: exact; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
         body { font-family: var(--font); color: var(--black); background: #2b2b2b; line-height: 1.35; -webkit-font-smoothing: antialiased; }
 
         .toolbar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 10px 20px; background: var(--g900); color: var(--white); border-bottom: 2px solid var(--red); font-size: 14px; }
@@ -56,7 +56,7 @@
 
         .row { display: flex; align-items: baseline; gap: 3mm; padding: 1.35mm 0; border-top: .25mm dashed var(--g300); font-size: 9.5pt; }
         .row:first-child { border-top: 0; }
-        .row .t { flex: none; width: 12mm; font-weight: 800; color: var(--red); font-variant-numeric: tabular-nums; }
+        .row .t { flex: none; width: 12mm; min-width: 12mm; white-space: nowrap; font-weight: 800; color: var(--red); font-variant-numeric: tabular-nums; }
         .row .n { font-weight: 600; }
         .row.paid .n::after { content: ' ★ платно'; font-size: 7.4pt; font-weight: 700; color: var(--red); letter-spacing: .02em; white-space: nowrap; }
         .row .pd, .row .rm, .add { display: none; }
@@ -69,6 +69,8 @@
         .sunday p { margin-top: 1.4mm; font-size: 9pt; color: var(--g300); }
 
         @media screen {
+            body.editing .page { height: auto; min-height: 297mm; overflow: visible; }
+            body.editing .pb { flex: none; }
             body.editing [contenteditable="true"] { outline: 1.5px dashed #d99a00; outline-offset: 1px; background: rgba(255, 213, 74, .25); border-radius: 1mm; cursor: text; }
             body.editing [contenteditable="true"]:focus { outline: 2px solid #E60000; background: rgba(255, 213, 74, .45); }
             body.editing .row .pd, body.editing .row .rm { display: inline-block; flex: none; border: 0; border-radius: 3px; cursor: pointer; font-weight: 800; width: 6mm; height: 5.2mm; line-height: 5mm; font-size: 9pt; padding: 0; }
@@ -84,7 +86,7 @@
             .sheet-wrap { padding: 0; }
             .page { margin: 0; box-shadow: none; }
         }
-        @media screen and (max-width: 820px) { .page { zoom: calc(100vw / 800px); } }
+        @media screen and (max-width: 820px) { .page { zoom: var(--z, 1); } }
 
         /* ===== Фото зала вместо белого фона (светлые карточки сохранены) ===== */
         .page { background: #0b0b0b; isolation: isolate; }
@@ -217,13 +219,19 @@
 
     <script>
         (function () {
-            var SEL = '.dn, .t, .n, .legend, .sunday h2, .sunday p';
+            var SEL = '.dn, .t, .n, .legend, .sunday h2, .sunday p, .kicker, .ph-title h1, .pf > div:first-child';
             var body = document.body;
             var wrap = document.querySelector('.sheet-wrap');
             var btnEdit = document.getElementById('btnEdit');
             var btnSave = document.getElementById('btnSave');
             var btnReset = document.getElementById('btnReset');
             var hint = document.getElementById('editHint');
+            function fit() {
+                var w = window.innerWidth;
+                document.documentElement.style.setProperty('--z', w <= 820 ? String(w / 794) : '1');
+            }
+            fit();
+            window.addEventListener('resize', fit);
             var KEY = 'lifegym-schedule:' + location.pathname;
             var ROW = '<span class="t">12:00</span><span class="n">Занятие</span><button type="button" class="pd" title="Платное / бесплатное">★</button><button type="button" class="rm" title="Удалить">×</button>';
 
@@ -274,6 +282,8 @@
             btnSave.addEventListener('click', function () {
                 autosave();
                 var clone = document.documentElement.cloneNode(true);
+                clone.style.removeProperty('--z');
+                if (!clone.getAttribute('style')) clone.removeAttribute('style');
                 clone.querySelector('body').classList.remove('editing');
                 clone.querySelectorAll('[contenteditable]').forEach(function (el) { el.removeAttribute('contenteditable'); });
                 var html = '<!DOCTYPE html>' + String.fromCharCode(10) + clone.outerHTML;
